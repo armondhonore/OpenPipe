@@ -1,0 +1,24 @@
+application:
+  name: openpipe
+  pods:
+  - name: app
+    image: openpipe/openpipe:latest
+    path: /
+    servicePorts:
+    - 3000
+    vars:
+      DATABASE_URL: "postgresql://openpipe:openpipe@postgres.pod:5432/openpipe"
+      NEXTAUTH_SECRET: "a1b2c3d4e5f6"
+      NEXTAUTH_URL: "https://relaxed-weasel-openpipe.cloud.nexlayer.ai"
+  - name: postgres
+    image: postgres:16-alpine
+    servicePorts:
+    - 5432
+    vars:
+      POSTGRES_DB: openpipe
+      POSTGRES_USER: openpipe
+      POSTGRES_PASSWORD: openpipe
+    volumes:
+    - name: openpipe-db
+      mountPath: /var/lib/postgresql/data
+      size: 10Gi
