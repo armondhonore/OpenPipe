@@ -2,7 +2,7 @@ application:
   name: openpipe
   pods:
   - name: app
-    image: "registry.nexlayer.io/user_01kece1xyh817dwff7wnarhkxd/openpipe:latest"
+    image: "registry.nexlayer.io/user_01kece1xyh817dwff7wnarhkxd/openpipe:19f15425c15"
     path: /
     servicePorts:
     - 3000
