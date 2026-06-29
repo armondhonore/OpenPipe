@@ -2,14 +2,14 @@
 
 **Live:** [https://relaxed-weasel-openpipe.cloud.nexlayer.ai](https://relaxed-weasel-openpipe.cloud.nexlayer.ai)  
 
-**Runtime:**  · **Port:** auto-detected · **Deploy branch:** main
+**Runtime:**  · **Port:** auto-detected · **Deploy branch:** nexlayer
 
 ---
 
 ## How this deployment works
 
 **openpipe** is deployed on [Nexlayer](https://nexlayer.ai) — a container-native
-platform where every push to `main` triggers a fully automated build-and-deploy
+platform where every push to `nexlayer` triggers a fully automated build-and-deploy
 pipeline with no infrastructure management required:
 
 1. **AI analysis** — the Nexlayer agent reads your repo, understands your runtime,
@@ -39,22 +39,29 @@ application:
   name: openpipe
   pods:
   - name: app
-    image: mirror.gcr.io/openpipe/openpipe:latest
+    image: "registry.nexlayer.io/user_01kece1xyh817dwff7wnarhkxd/openpipe:latest"
     path: /
     servicePorts:
     - 3000
     vars:
-      DATABASE_URL: "postgresql://openpipe:${POSTGRES_PASSWORD}@postgres.pod:5432/openpipe"
-      NEXTAUTH_SECRET: "a1b2c3d4e5f6"
+      DATABASE_URL: "postgresql://openpipe:${POSTGRES_PASSWORD}@openpipe-postgres-service.pod:5432/openpipe"
+      NODE_ENV: "production"
+      PORT: "3000"
+      NEXTAUTH_SECRET: "a1b2c3d4e5f60718293a4b5c6d7e8f90"
       NEXTAUTH_URL: "https://relaxed-weasel-openpipe.cloud.nexlayer.ai"
-  - name: postgres
+      NEXT_PUBLIC_HOST: "https://relaxed-weasel-openpipe.cloud.nexlayer.ai"
+      AUTHENTICATED_SYSTEM_KEY: "placeholder-system-key"
+      OPENAI_API_KEY: "sk-placeholder"
+      GITHUB_CLIENT_ID: "placeholder-github-id"
+      GITHUB_CLIENT_SECRET: "placeholder-github-secret"
+  - name: openpipe-postgres-service
     image: mirror.gcr.io/library/postgres:16-alpine
     servicePorts:
     - 5432
     vars:
       POSTGRES_DB: openpipe
       POSTGRES_USER: openpipe
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
     - name: openpipe-db
       mountPath: /var/lib/postgresql/data
@@ -80,7 +87,7 @@ only regenerates it if you delete it or on the very first deploy.
 ### `.github/workflows/nexlayer.yml` — CI/CD
 
 Triggers on:
-- **Push** to `main` → production redeploy
+- **Push** to `nexlayer` → production redeploy
 - **Pull request** → preview deploy with a unique URL posted as a PR comment
 - **Manual** → run on demand from the Actions tab (no commit required)
 
@@ -97,7 +104,7 @@ include this context in your prompt:
 > *"This project is deployed on Nexlayer. The deployment manifest is `nexlayer.yaml`.
 > The container exposes port auto-detected. When adding a new service (database, cache,
 > worker), add it as a new pod in `nexlayer.yaml` and reference it with
-> `<podName>.pod:<port>` syntax. CI/CD runs on push to `main`."*
+> `<podName>.pod:<port>` syntax. CI/CD runs on push to `nexlayer`."*
 
 The `nexlayer.skills` file in this repo gives agents structured guidance on the
 Nexlayer platform, including schema reference, common patterns, and anti-patterns.
