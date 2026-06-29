@@ -2,7 +2,9 @@
 # the repo root; this mirrors app/Dockerfile which already uses root-relative
 # COPY paths. Pinned so the pipeline does not regenerate it.
 FROM mirror.gcr.io/library/node:20.9.0-bullseye AS base
-RUN yarn global add pnpm
+# pnpm 8.x matches the repo's lockfileVersion 6.0 and supports Node 20.
+# (Floating `pnpm` now resolves to v11 which requires Node >=22.13 and fails.)
+RUN yarn global add pnpm@8.15.9
 
 # DEPS
 FROM base AS deps
